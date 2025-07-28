@@ -16,60 +16,55 @@ export class AuthService {
 
   async register(data: RegisterDTO) {
     const userExists = await this.prismaService.user.findUnique({
-      where: {
-        email: data.email,
-      },
+      where: { email: data.email },
     });
-
-    if (userExists) {
-      throw new UnauthorizedException('User already exists');
-    }
+    if (userExists) throw new UnauthorizedException('User already exists');
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    const user = await this.prismaService.user.create({
-      data: {
-        ...data,
-        password: hashedPassword,
-      },
-    });
-
-    const accessToken = await this.jwtService.signAsync({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    });
-
-    await this.mailService.sendMail(
-      user.email,
-      '🎉 Bem-vindo à nossa plataforma!',
-      'Seu cadastro foi realizado com sucesso.',
-      `
-  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border-radius: 10px; background-color: #f9f9f9; color: #333;">
-    <h2 style="color: #2c3e50;">Olá, ${user.name}! 👋</h2>
-    <p style="font-size: 16px;">Estamos muito felizes em ter você conosco!</p>
-    
-    <p style="font-size: 16px;">
-      Seu cadastro foi realizado com sucesso. Agora você pode acessar nossa plataforma, explorar os produtos disponíveis e aproveitar todos os recursos.
-    </p>
-
-    <div style="margin: 30px 0;">
-      <a href="#" 
-         style="display: inline-block; background-color: #2ecc71; color: white; text-decoration: none; padding: 12px 24px; border-radius: 5px; font-weight: bold;">
-        Acessar Plataforma
-      </a>
-    </div>
-
-    <p style="font-size: 14px; color: #7f8c8d;">Se você não se cadastrou em nossa plataforma, pode ignorar este e-mail.</p>
-
-    <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;" />
-
-    <p style="font-size: 12px; color: #95a5a6;">Tulio - TestApp</p>
-  </div>
-  `,
+    const verificationToken = await this.jwtService.signAsync(
+      { name: data.name, email: data.email, password: hashedPassword },
+      { secret: process.env.JWT_VERIFICATION_SECRET, expiresIn: '1h' },
     );
 
-    return { message: 'User registered successfully', accessToken };
+    const verifyUrl = `http://localhost:3000/verify?token=${verificationToken}`;
+    await this.mailService.sendMail(
+      data.email,
+      'Confirme seu cadastro',
+      'Clique no link para ativar sua conta.',
+      `<<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 40px auto; padding: 30px; border-radius: 12px; background-color: #f4f6f8; color: #2c3e50; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+  <h2 style="margin-top: 0; font-weight: 700;">Hi, ${data.name}! 👋</h2>
+  <p style="font-size: 16px; line-height: 1.5;">
+    We are very happy to have you with us!
+  </p>
+
+  <p style="font-size: 16px; line-height: 1.5;">
+    To complete your registration, please click the button below and confirm your email.
+  </p>
+
+  <div style="text-align: center; margin: 35px 0;">
+    <a href="${verifyUrl}" 
+       style="background-color: #27ae60; color: white; padding: 14px 32px; border-radius: 8px; font-weight: 700; text-decoration: none; display: inline-block; box-shadow: 0 4px 12px rgba(39, 174, 96, 0.5); transition: background-color 0.3s ease;">
+      Confirm registration
+    </a>
+  </div>
+
+  <p style="font-size: 14px; color: #7f8c8d; text-align: center;">
+    If you haven't registered on our platform, you can simply ignore this email.
+  </p>
+
+  <hr style="border: none; border-top: 1px solid #ddd; margin: 25px 0;" />
+
+  <p style="font-size: 12px; color: #95a5a6; text-align: center;">
+    Tulio - TestApp
+  </p>
+</div>
+`,
+    );
+
+    return {
+      message: 'A verification email has been sent to your inbox.',
+    };
   }
 
   async login(data: LoginDTO) {
@@ -96,5 +91,42 @@ export class AuthService {
     });
 
     return { message: 'User logged in successfully', acessToken };
+  }
+
+  async verifyUser(token: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_VERIFICATION_SECRET,
+      });
+
+      const existingUser = await this.prismaService.user.findUnique({
+        where: { email: payload.email },
+      });
+      if (existingUser) {
+        throw new UnauthorizedException('User already verified');
+      }
+
+      // Cria o usuário definitivo no banco
+      const user = await this.prismaService.user.create({
+        data: {
+          name: payload.name,
+          email: payload.email,
+          password: payload.password,
+        },
+      });
+
+      const accessToken = await this.jwtService.signAsync({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      });
+
+      return {
+        message: 'User verified and registered successfully',
+        accessToken,
+      };
+    } catch (err) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
   }
 }

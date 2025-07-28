@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -31,5 +32,8 @@ export class AuthController {
     return request.user;
   }
 
-  
+  @Get('verify')
+  async verifyUser(@Query('token') token: string) {
+    return this.authService.verifyUser(token);
+  }
 }
