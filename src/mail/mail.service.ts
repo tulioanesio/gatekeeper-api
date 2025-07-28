@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as nodemailer from 'nodemailer';
-import { RegisterDTO } from 'src/auth/dtos/register-user-dto';
 
 @Injectable()
 export class MailService {

@@ -30,9 +30,9 @@ export class AuthService {
     const verifyUrl = `http://localhost:3000/verify?token=${verificationToken}`;
     await this.mailService.sendMail(
       data.email,
-      'Confirme seu cadastro',
-      'Clique no link para ativar sua conta.',
-      `<<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 40px auto; padding: 30px; border-radius: 12px; background-color: #f4f6f8; color: #2c3e50; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+      'Confirm your registration',
+      'Click the link to activate your account.',
+      `<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 40px auto; padding: 30px; border-radius: 12px; background-color: #f4f6f8; color: #2c3e50; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
   <h2 style="margin-top: 0; font-weight: 700;">Hi, ${data.name}! 👋</h2>
   <p style="font-size: 16px; line-height: 1.5;">
     We are very happy to have you with us!
@@ -106,7 +106,6 @@ export class AuthService {
         throw new UnauthorizedException('User already verified');
       }
 
-      // Cria o usuário definitivo no banco
       const user = await this.prismaService.user.create({
         data: {
           name: payload.name,
