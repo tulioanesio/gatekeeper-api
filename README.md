@@ -63,9 +63,6 @@ cd nest-auth-email
 
 # Install dependencies
 npm install
-
-# Create and configure environment variables
-cp .env.example .env
 ```
 
 ## Enviroment variables
