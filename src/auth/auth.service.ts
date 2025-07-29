@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginDTO } from 'src/auth/dtos/login-user-dto';
 import { RegisterDTO } from 'src/auth/dtos/register-user-dto';
@@ -78,7 +81,7 @@ export class AuthService {
       throw new UnauthorizedException('User not found');
     }
 
-    const passwordMatch = await bcrypt.compare(data.password, user.password);
+    const passwordMatch: unknown = await bcrypt.compare(data.password, user.password);
 
     if (!passwordMatch) {
       throw new UnauthorizedException('Invalid credentials');
