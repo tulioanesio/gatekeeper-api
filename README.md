@@ -21,78 +21,86 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# Gatekeeper API
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This is a **learning-focused** project that implements an authentication system with **account confirmation via email**, using:
 
-## Project setup
+- NestJS
+- PostgreSQL (via Prisma ORM)
+- Nodemailer
+- Amazon SES (Simple Email Service)
 
-```bash
-$ pnpm install
-```
+## Features
 
-## Compile and run the project
+- User registration with email verification link
+- Email confirmation via JWT token (valid for 1 hour)
+- Login only after email verification
+- Password hashing with Bcrypt
+- JWT for session management
 
-```bash
-# development
-$ pnpm run start
+---
 
-# watch mode
-$ pnpm run start:dev
+## Tech Stack
 
-# production mode
-$ pnpm run start:prod
-```
+| Technology     | Purpose                                  |
+|----------------|-------------------------------------------|
+| NestJS         | Back-end framework (TypeScript + Node.js) |
+| Prisma         | ORM for PostgreSQL                        |
+| PostgreSQL     | Relational database                       |
+| Nodemailer     | Email delivery library                    |
+| Amazon SES     | Scalable email service by AWS             |
+| Bcrypt         | Secure password hashing                   |
+| JWT            | Token-based authentication                |
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Setup Instructions
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+# Clone the repository
+git clone https://github.com/your-username/nest-auth-email.git
+cd nest-auth-email
+
+# Install dependencies
+npm install
+
+# Create and configure environment variables
+cp .env.example .env
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Enviroment variables
+```bash
+# .env Configuration
+DATABASE_URL="postgresql://user:password@localhost:5432/nest_auth_db"
 
-## Resources
+JWT_SECRET=your_jwt_secret
+JWT_VERIFICATION_SECRET=your_email_verification_secret
 
-Check out a few resources that may come in handy when working with NestJS:
+MAIL_HOST="your_host"
+DOMAIN_MAIL="noreply@yourdomain.com"
+MAIL_USER="your_email_user"
+MAIL_PASS="your_email_password"
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Run migrations
+```bash
+npx prisma migrate dev --name init
+```
 
-## Support
+## Start project
+```bash
+pnpm run start:dev
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# The server will be running at http://localhost:3000
+```
 
-## Stay in touch
+## Routes
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- `POST /register`: Sends a confirmation email with a verification link and registers a new user.  
+- `POST /login`: Logs in an existing user.  
+- `GET /verify`: Verifies the user’s email using the `JWT_VERIFICATION_SECRET` sent by email.  
+- `GET /me`: Returns the authenticated user’s data. Requires a valid JWT access token in the `Authorization` header.
 
-## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
