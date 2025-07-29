@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, Length, Matches } from 'class-validator';
+import { Options } from '@nestjs/common';
+import { IsEmail, IsNotEmpty, IsStrongPassword, Length, Matches } from 'class-validator';
 
 export class RegisterDTO {
   @IsNotEmpty({ message: 'Name cannot be empty' })
@@ -13,10 +14,7 @@ export class RegisterDTO {
   email: string;
 
   @IsNotEmpty({ message: 'Password cannot be empty' })
-  @Length(8, 128, { message: 'Password must be between 8 and 128 characters' })
-  @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, {
-    message:
-      'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character',
-  })
+  @Length(6, 128, { message: 'Password must be between 6 and 128 characters' })
+  @IsStrongPassword({ minLength: 6, minUppercase: 1, minLowercase: 1, minNumbers: 1, minSymbols: 1 })
   password: string;
 }

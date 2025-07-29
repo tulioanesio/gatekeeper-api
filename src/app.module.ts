@@ -6,10 +6,13 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { MailModule } from './mail/mail.module';
 import { MailService } from './mail/mail.service';
+import { ProductController } from './product/product.controller';
+import { ProductService } from './product/product.service';
+import { ProductModule } from './product/product.module';
 
 @Module({
-  imports: [AuthModule, PrismaModule, MailModule],
-  controllers: [AuthController],
-  providers: [AuthService, PrismaService, MailService],
+  imports: [AuthModule, PrismaModule, MailModule, ProductModule],
+  controllers: [AuthController, ProductController],
+  providers: [AuthService, PrismaService, MailService, ProductService],
 })
 export class AppModule {}
