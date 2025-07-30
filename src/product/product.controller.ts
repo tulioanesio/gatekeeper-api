@@ -12,12 +12,15 @@ import { ProductService } from './product.service';
 import { CreateProductDto } from './dtos/create-product-dto';
 import { UpdateProductDto } from './dtos/update-product-dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @Post()
   async createProduct(@Body() body: CreateProductDto) {
     return this.productService.createProduct(body);
@@ -29,13 +32,15 @@ export class ProductController {
     return this.productService.getProduct();
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @Put(':id')
   async updateProduct(@Param('id') id: string, @Body() body: UpdateProductDto) {
     return this.productService.updateProduct(Number(id), body);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @Delete(':id')
   async deleteProduct(@Param('id') id: string) {
     return this.productService.deleteProduct(Number(id));

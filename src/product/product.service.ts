@@ -12,7 +12,7 @@ export class ProductService {
       data: {
         name: data.name,
         description: data.description,
-        price: data.price,
+        price: Number(data.price),
       },
     });
   }
@@ -29,7 +29,7 @@ export class ProductService {
       data: {
         name: data.name,
         description: data.description,
-        price: data.price,
+        price: Number(data.price),
       },
     });
   }
