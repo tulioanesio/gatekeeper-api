@@ -23,12 +23,7 @@
 
 # Gatekeeper API
 
-This is a **learning-focused** project that implements an authentication system with **account confirmation via email**, using:
-
-- NestJS
-- PostgreSQL (via Prisma ORM)
-- Nodemailer
-- Amazon SES (Simple Email Service)
+This is a **learning-focused** project that implements an authentication system with **email account confirmation** and the RABC method
 
 ## Features
 
@@ -37,6 +32,8 @@ This is a **learning-focused** project that implements an authentication system 
 - Login only after email verification
 - Password hashing with Bcrypt
 - JWT for session management
+- Users with role `USER` can get products
+- Users with role `ADMIN` can make a CRUD in products
 
 ---
 
@@ -97,6 +94,10 @@ pnpm run start:dev
 - `POST /login`: Logs in an existing user.  
 - `GET /verify`: Verifies the user’s email using the `JWT_VERIFICATION_SECRET` sent by email.  
 - `GET /me`: Returns the authenticated user’s data. Requires a valid JWT access token in the `Authorization` header.
+- `GET /product`: Returns a list of all products. Accessible by authenticated users with roles `USER/ADMIN`. 
+- `POST /product`: Creates a new product. Restricted to `ADMIN` role.
+- `PUT /product`: Updates the product with the specified ID. Restricted to `ADMIN` role.
+- `DELETE /product`: Deletes the product with the specified ID. Restricted to `ADMIN` role.
 
 
 
