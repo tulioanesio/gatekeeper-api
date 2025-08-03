@@ -55,11 +55,11 @@ This is a **learning-focused** project that implements an authentication system 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/nest-auth-email.git
-cd nest-auth-email
+git clone https://github.com/tulioanesio/gatekeeper-api.git
+cd gatekeeper-api
 
 # Install dependencies
-npm install
+pnpm install
 ```
 
 ## Enviroment variables
