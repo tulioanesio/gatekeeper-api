@@ -23,7 +23,7 @@
 
 # Gatekeeper API
 
-This is a **learning-focused** project that implements an authentication system with **email account confirmation** and the RABC method
+This is a **learning-focused** project that implements an authentication system with **email account confirmation** and the RBAC method
 
 ## Features
 
